@@ -1,9 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans+Narrow&display=swap');
+
 *,
 *::after,
 *::before {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+body {
+  font-family: 'PT Sans Narrow', sans-serif;
 }
 
 .title {
@@ -17,6 +23,21 @@
   align-items: center;
   margin-inline: auto;
   margin-top: 2rem;
+  width: fit-content;
+}
+
+.config {
+  display: flex;
+  flex-direction: column;
+  margin-right: 2rem;
+  gap: 0.5rem;
+  font-size: 1.3em;
+}
+
+.generate {
+  margin-inline: auto;
+  margin-top: 1rem;
+  padding: 0.3rem 0.7rem;
   width: fit-content;
 }
 

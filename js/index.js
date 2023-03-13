@@ -2,11 +2,11 @@ const canvas = document.querySelector('#canvas');
 
 const WIDTH = 400; // Canvas width
 const HEIGHT = 400; // Canvas height
-const RES = 2; // Space between points
-const COLS = 1 + WIDTH / RES; // Amount of colums
-const ROWS = 1 + HEIGHT / RES; // Amount of rows
-const CENTER_AMOUNT = 20; // Amount of center points
-const CENTER_DIST = 150; // Distance to the center
+const CENTER_AMOUNT = 50; // Amount of center points
+const CENTER_DIST = 140; // Distance to the center
+let RES = 5; // Space between points
+let COLS = Math.round(1 + WIDTH / RES); // Amount of colums
+let ROWS = Math.round(1 + HEIGHT / RES); // Amount of rows
 let z = 0;
 
 // Create centers for worley noise
@@ -129,3 +129,16 @@ function chooseLine(ctx, type, linePoints) {
     types[type]();
   }
 }
+
+// Config listeners
+document.querySelector('.resolution').addEventListener('change', (e) => {
+  RES = e.target.value;
+  COLS = Math.round(1 + WIDTH / RES);
+  ROWS = Math.round(1 + HEIGHT / RES);
+});
+
+document.querySelector('.generate').addEventListener('click', () => {
+  for (let i = 0; i < CENTER_AMOUNT; i++) {
+    centers[i] = ({ x: random(0, WIDTH), y: random(0, HEIGHT), z: random(0, WIDTH) });
+  }
+});

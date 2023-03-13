@@ -6,6 +6,20 @@
   padding: 0;
 }
 
+.title {
+  text-align: center;
+  margin-top: 3rem;
+  font-size: 3em;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  margin-inline: auto;
+  margin-top: 2rem;
+  width: fit-content;
+}
+
 #canvas {
-  background-color: grey;
+  border: 1px black solid;
 }

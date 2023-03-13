@@ -2,15 +2,29 @@ const canvas = document.querySelector('#canvas');
 
 const WIDTH = 400;
 const HEIGHT = 400;
-const RES = 10;
+const RES = 20;
 const COLS = 1 + WIDTH / RES;
 const ROWS = 1 + HEIGHT / RES;
+const CENTER_AMOUNT = 150;
+
+const centers = [];
+for (let i = 0; i < CENTER_AMOUNT; i++) {
+  centers.push({ x: random(0, WIDTH), y: random(0, HEIGHT) });
+}
 
 const points = new Array(COLS);
 for (let i = 0; i < COLS; i++) {
   points[i] = new Array(ROWS);
   for (let j = 0; j < ROWS; j++) {
-    points[i][j] = Math.random() < 0.5 ? 1 : 0; // Random value
+    //points[i][j] = Math.random() + 0.01;  // Random value not 0
+    let distance = WIDTH + 1;
+    for (let k = 0; k < CENTER_AMOUNT; k++) {
+      const aux = dist({ x: i * RES, y: j * RES }, centers[k]);
+      if (aux < distance) {
+        distance = aux;
+      }
+    }
+    points[i][j] = map(distance, 0, WIDTH, 0, 1);
   }
 }
 
@@ -18,10 +32,8 @@ function draw() {
   if (canvas.getContext) {
     const ctx = canvas.getContext('2d');
 
-    ctx.fillStyle = "orange";
     for (let i = 0; i < COLS - 1; i++) {
       for (let j = 0; j < ROWS - 1; j++) {
-        const value = points[i][j];
         const x = i * RES;
         const y = j * RES;
         const half = RES / 2;
@@ -34,20 +46,29 @@ function draw() {
         };
 
         const type = getType(
-          points[i][j], points[i + 1][j], points[i + 1][j + 1], points[i][j + 1]
+          Math.round(points[i][j]),
+          Math.round(points[i + 1][j]),
+          Math.round(points[i + 1][j + 1]),
+          Math.round(points[i][j + 1])
         );
 
         chooseLine(ctx, type, linePoints);
       }
     }
-
-    // window.requestAnimationFrame(draw);
   }
 }
 
 draw();
 
 // Utils functions
+function dist(point1, point2) {
+  return (point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2;
+}
+
+function map(number, inMin, inMax, outMin, outMax) {
+  return (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+}
+
 function line(ctx, point1, point2) {
   ctx.beginPath();
   ctx.moveTo(point1.x, point1.y);
@@ -59,6 +80,10 @@ function getType(p1, p2, p3, p4) {
   return (p1 * 8) + (p2 * 4) + (p3 * 2) + p4;
 }
 
+function random(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 function chooseLine(ctx, type, linePoints) {
   const types = {
     1: () => line(ctx, linePoints.left, linePoints.bot),
@@ -68,7 +93,7 @@ function chooseLine(ctx, type, linePoints) {
     6: () => line(ctx, linePoints.top, linePoints.bot),
     7: () => line(ctx, linePoints.left, linePoints.top),
     8: () => line(ctx, linePoints.left, linePoints.top), // types[7]()
-    9: () => line(ctx, linePoints.left, linePoints.top), // types[6]()
+    9: () => line(ctx, linePoints.top, linePoints.bot), // types[6]()
     11: () => line(ctx, linePoints.top, linePoints.right), // types[4]()
     12: () => line(ctx, linePoints.left, linePoints.right), // types[3]()
     13: () => line(ctx, linePoints.right, linePoints.bot), // types[2]()

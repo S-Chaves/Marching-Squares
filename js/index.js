@@ -1,43 +1,64 @@
 const canvas = document.querySelector('#canvas');
 
-const WIDTH = 400;
-const HEIGHT = 400;
-const RES = 20;
-const COLS = 1 + WIDTH / RES;
-const ROWS = 1 + HEIGHT / RES;
-const CENTER_AMOUNT = 150;
+const WIDTH = 400; // Canvas width
+const HEIGHT = 400; // Canvas height
+const RES = 2; // Space between points
+const COLS = 1 + WIDTH / RES; // Amount of colums
+const ROWS = 1 + HEIGHT / RES; // Amount of rows
+const CENTER_AMOUNT = 20; // Amount of center points
+const CENTER_DIST = 150; // Distance to the center
+let z = 0;
 
+// Create centers for worley noise
 const centers = [];
 for (let i = 0; i < CENTER_AMOUNT; i++) {
-  centers.push({ x: random(0, WIDTH), y: random(0, HEIGHT) });
+  centers.push({ x: random(0, WIDTH), y: random(0, HEIGHT), z: random(0, WIDTH) });
 }
 
+// Create points for the lines
 const points = new Array(COLS);
 for (let i = 0; i < COLS; i++) {
   points[i] = new Array(ROWS);
-  for (let j = 0; j < ROWS; j++) {
-    //points[i][j] = Math.random() + 0.01;  // Random value not 0
-    let distance = WIDTH + 1;
-    for (let k = 0; k < CENTER_AMOUNT; k++) {
-      const aux = dist({ x: i * RES, y: j * RES }, centers[k]);
-      if (aux < distance) {
-        distance = aux;
-      }
-    }
-    points[i][j] = map(distance, 0, WIDTH, 0, 1);
-  }
 }
 
 function draw() {
   if (canvas.getContext) {
     const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+    if (z == WIDTH) z = 0;
+    else z++;
+
+    for (let i = 0; i < COLS; i++) {
+      for (let j = 0; j < ROWS; j++) {
+        let distance = WIDTH + 1;
+
+        for (let k = 0; k < CENTER_AMOUNT; k++) {
+          const aux = dist({ x: i * RES, y: j * RES, z }, centers[k]);
+          if (aux < distance) {
+            distance = aux;
+          }
+        }
+
+        points[i][j] = map(distance + CENTER_DIST, 0, WIDTH, 0, 1);
+      }
+    }
 
     for (let i = 0; i < COLS - 1; i++) {
       for (let j = 0; j < ROWS - 1; j++) {
         const x = i * RES;
         const y = j * RES;
         const half = RES / 2;
+        // Points of the square
+        const a = points[i][j];
+        const b = points[i + 1][j];
+        const c = points[i + 1][j + 1];
+        const d = points[i][j + 1];
 
+        const type = getType(
+          Math.round(a), Math.round(b), Math.round(c), Math.round(d)
+        );
+        // Points in between vertices
         const linePoints = {
           top: { x: x + half, y },
           right: { x: x + RES, y: y + half },
@@ -45,16 +66,11 @@ function draw() {
           left: { x, y: y + half }
         };
 
-        const type = getType(
-          Math.round(points[i][j]),
-          Math.round(points[i + 1][j]),
-          Math.round(points[i + 1][j + 1]),
-          Math.round(points[i][j + 1])
-        );
-
         chooseLine(ctx, type, linePoints);
       }
     }
+
+    window.requestAnimationFrame(draw);
   }
 }
 
@@ -62,7 +78,8 @@ draw();
 
 // Utils functions
 function dist(point1, point2) {
-  return (point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2;
+  return Math.sqrt(
+    (point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2 + (point2.z - point1.z) ** 2);
 }
 
 function map(number, inMin, inMax, outMin, outMax) {

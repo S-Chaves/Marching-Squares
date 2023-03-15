@@ -2,9 +2,9 @@ const canvas = document.querySelector('#canvas');
 
 const WIDTH = 400; // Canvas width
 const HEIGHT = 400; // Canvas height
-const CENTER_AMOUNT = 50; // Amount of center points
-const CENTER_DIST = 140; // Distance to the center
-let RES = 5; // Space between points
+let CENTER_DIST = 150; // Distance to the center
+let CENTER_AMOUNT = 50; // Amount of center points
+let RES = 10; // Space between points
 let COLS = Math.round(1 + WIDTH / RES); // Amount of colums
 let ROWS = Math.round(1 + HEIGHT / RES); // Amount of rows
 let z = 0;
@@ -87,6 +87,8 @@ function map(number, inMin, inMax, outMin, outMax) {
 }
 
 function line(ctx, point1, point2) {
+  // const clr = map(point1.y, 0, HEIGHT, 0, 255);
+  // ctx.strokeStyle = `rgba(${clr},${0},${0})`;
   ctx.beginPath();
   ctx.moveTo(point1.x, point1.y);
   ctx.lineTo(point2.x, point2.y);
@@ -141,4 +143,8 @@ document.querySelector('.generate').addEventListener('click', () => {
   for (let i = 0; i < CENTER_AMOUNT; i++) {
     centers[i] = ({ x: random(0, WIDTH), y: random(0, HEIGHT), z: random(0, WIDTH) });
   }
+});
+
+document.querySelector('.center-amount').addEventListener('change', (e) => {
+  CENTER_AMOUNT = e.target.value;
 });

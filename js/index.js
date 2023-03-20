@@ -2,6 +2,7 @@ const canvas = document.querySelector('#canvas');
 
 const WIDTH = 400; // Canvas width
 const HEIGHT = 400; // Canvas height
+let points;
 let CENTER_DIST = 150; // Distance to the center
 let CENTER_AMOUNT = 100; // Amount of center points
 let RES = 10; // Space between points
@@ -16,11 +17,7 @@ for (let i = 0; i < CENTER_AMOUNT; i++) {
   centers.push({ x: random(0, WIDTH), y: random(0, HEIGHT), z: random(0, WIDTH) });
 }
 
-// Create points for the lines
-const points = new Array(COLS);
-for (let i = 0; i < COLS; i++) {
-  points[i] = new Array(ROWS);
-}
+createPoints();
 
 function draw() {
   if (canvas.getContext) {
@@ -30,7 +27,7 @@ function draw() {
     if (z == WIDTH) z = 0;
     else z++;
 
-    console.log(typeof CENTER_DIST);
+    console.log(RES);
 
     for (let i = 0; i < COLS; i++) {
       for (let j = 0; j < ROWS; j++) {
@@ -80,6 +77,14 @@ function draw() {
 draw();
 
 // Utils functions
+function createPoints() {
+  // Create points for the lines
+  points = new Array(COLS);
+  for (let i = 0; i < COLS; i++) {
+    points[i] = new Array(ROWS);
+  }
+}
+
 function dist(point1, point2) {
   return Math.sqrt(
     (point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2 + (point2.z - point1.z) ** 2);
@@ -142,6 +147,7 @@ document.querySelector('.resolution').addEventListener('change', (e) => {
   RES = parseInt(e.target.value);
   COLS = Math.round(1 + WIDTH / RES);
   ROWS = Math.round(1 + HEIGHT / RES);
+  createPoints();
 });
 
 document.querySelector('.generate').addEventListener('click', () => {

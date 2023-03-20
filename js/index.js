@@ -30,6 +30,8 @@ function draw() {
     if (z == WIDTH) z = 0;
     else z++;
 
+    console.log(typeof CENTER_DIST);
+
     for (let i = 0; i < COLS; i++) {
       for (let j = 0; j < ROWS; j++) {
         let distance = WIDTH + 1;
@@ -137,7 +139,7 @@ function chooseLine(ctx, type, linePoints) {
 
 // Config listeners
 document.querySelector('.resolution').addEventListener('change', (e) => {
-  RES = e.target.value;
+  RES = parseInt(e.target.value);
   COLS = Math.round(1 + WIDTH / RES);
   ROWS = Math.round(1 + HEIGHT / RES);
 });
@@ -149,7 +151,11 @@ document.querySelector('.generate').addEventListener('click', () => {
 });
 
 document.querySelector('.center-amount').addEventListener('change', (e) => {
-  CENTER_AMOUNT = e.target.value;
+  CENTER_AMOUNT = parseInt(e.target.value);
+});
+
+document.querySelector('.center-distance').addEventListener('change', (e) => {
+  CENTER_DIST = parseInt(e.target.value);
 });
 
 document.querySelector('.color').addEventListener('click', () => COLOR = !COLOR);

@@ -3,13 +3,14 @@ const canvas = document.querySelector('#canvas');
 const WIDTH = 400; // Canvas width
 const HEIGHT = 400; // Canvas height
 let points;
-let CENTER_DIST = 150; // Distance to the center
+let CENTER_DIST = 180; // Distance to the center
 let CENTER_AMOUNT = 100; // Amount of center points
 let RES = 10; // Space between points
 let COLS = Math.round(1 + WIDTH / RES); // Amount of colums
 let ROWS = Math.round(1 + HEIGHT / RES); // Amount of rows
 let COLOR = false; // If true there's color
-let z = 0;
+let PERSPECTIVE_3D = false; // If true show perspective in 3D
+let z = null;
 
 // Create centers for worley noise
 const centers = [];
@@ -24,10 +25,10 @@ function draw() {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-    if (z == WIDTH) z = 0;
-    else z++;
-
-    console.log(RES);
+    if (z !== null) {
+      if (z == WIDTH) z = 0;
+      else z++;
+    }
 
     for (let i = 0; i < COLS; i++) {
       for (let j = 0; j < ROWS; j++) {
@@ -86,6 +87,10 @@ function createPoints() {
 }
 
 function dist(point1, point2) {
+  if (point1.z == null) {
+    return Math.sqrt(
+      (point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2);
+  }
   return Math.sqrt(
     (point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2 + (point2.z - point1.z) ** 2);
 }
@@ -165,3 +170,9 @@ document.querySelector('.center-distance').addEventListener('change', (e) => {
 });
 
 document.querySelector('.color').addEventListener('click', () => COLOR = !COLOR);
+
+document.querySelector('.perspective').addEventListener('click', () => {
+  if (PERSPECTIVE_3D) z = null;
+  else z = 0;
+  PERSPECTIVE_3D = !PERSPECTIVE_3D;
+});

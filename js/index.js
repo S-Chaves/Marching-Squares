@@ -45,6 +45,7 @@ function draw() {
       }
     }
 
+    ctx.strokeStyle = "black";
     for (let i = 0; i < COLS - 1; i++) {
       for (let j = 0; j < ROWS - 1; j++) {
         const x = i * RES;
@@ -104,6 +105,7 @@ function line(ctx, point1, point2) {
     const clr = map(point1.y, 0, HEIGHT, 0, 255);
     ctx.strokeStyle = `rgba(${clr},${0},${0})`;
   }
+
   ctx.beginPath();
   ctx.moveTo(point1.x, point1.y);
   ctx.lineTo(point2.x, point2.y);

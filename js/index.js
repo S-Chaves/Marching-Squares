@@ -10,6 +10,7 @@ let COLS = Math.round(1 + WIDTH / RES); // Amount of colums
 let ROWS = Math.round(1 + HEIGHT / RES); // Amount of rows
 let COLOR = false; // If true there's color
 let PERSPECTIVE_3D = false; // If true show perspective in 3D
+let MANHATTAN_DIST = false; // If true uses manhattan distance
 let z = null;
 
 // Create centers for worley noise
@@ -35,10 +36,11 @@ function draw() {
         let distance = WIDTH + 1;
 
         for (let k = 0; k < CENTER_AMOUNT; k++) {
-          const aux = dist({ x: i * RES, y: j * RES, z }, centers[k]);
-          if (aux < distance) {
-            distance = aux;
-          }
+          const dist = MANHATTAN_DIST
+            ? manhattanDist({ x: i * RES, y: j * RES, z }, centers[k])
+            : euclideanDist({ x: i * RES, y: j * RES, z }, centers[k]);
+
+          if (dist < distance) distance = dist;
         }
 
         points[i][j] = map(distance + CENTER_DIST, 0, WIDTH, 0, 1);
@@ -87,13 +89,21 @@ function createPoints() {
   }
 }
 
-function dist(point1, point2) {
-  if (point1.z == null) {
+function euclideanDist(point1, point2) {
+  if (point1.z === null) {
     return Math.sqrt(
       (point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2);
   }
   return Math.sqrt(
     (point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2 + (point2.z - point1.z) ** 2);
+}
+
+function manhattanDist(point1, point2) {
+  if (point1.z === null) {
+    return Math.abs(point2.x - point1.x) + Math.abs(point2.y - point1.y);
+  }
+  return Math.abs(point2.x - point1.x) + Math.abs(point2.y - point1.y)
+    + Math.abs(point2.z - point1.z);
 }
 
 function map(number, inMin, inMax, outMin, outMax) {
@@ -178,3 +188,5 @@ document.querySelector('.perspective').addEventListener('click', () => {
   else z = 0;
   PERSPECTIVE_3D = !PERSPECTIVE_3D;
 });
+
+document.querySelector('.manhattan').addEventListener('click', () => MANHATTAN_DIST = !MANHATTAN_DIST);
